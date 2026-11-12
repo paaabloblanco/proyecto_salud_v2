@@ -1,0 +1,16 @@
+# Secretos: NUNCA se suben
+.env
+
+# Entorno virtual
+.venv/
+
+# Archivos generados por Python y pytest
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editores / sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
