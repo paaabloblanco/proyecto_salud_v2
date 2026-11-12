@@ -34,3 +34,11 @@ Formato: fecha, decisión, porqué. Las decisiones se añaden al final y no se b
 
 ## 2026-11-12. Renombrar claude.md a CLAUDE.md
 **Porqué:** es la convención que reconoce Claude Code en cualquier sistema operativo (en Linux y Mac importan las mayúsculas).
+
+## 2026-11-12. Presupuesto y gustos se aplazan dentro de v0.1
+**Decisión:** el paso 1 modela solo los días, la actividad, la hora y el peso. El presupuesto y los gustos se añadirán más adelante.
+**Porqué:** se avanza con lo mínimo que necesitan la clasificación (paso 2) y las reglas (paso 3). El `CLAUDE.md` los sigue listando en v0.1, así que habrá que añadirlos antes de cerrar la versión.
+
+## 2026-11-12. Los días se identifican del 1 (lunes) al 7 (domingo)
+**Decisión:** el número no es un campo; lo da la **posición** en `Semana.dias`. En el código, `dias[0]` es el lunes y `dias[6]` el domingo; el 1–7 solo se usa al mostrar los días al usuario.
+**Porqué:** es más sencillo. Como no hay un campo de número, no puede haber días repetidos y no hace falta validarlo. Coste: hay que recordar que Python empieza a contar desde 0.
