@@ -42,3 +42,17 @@ Formato: fecha, decisión, porqué. Las decisiones se añaden al final y no se b
 ## 2026-11-12. Los días se identifican del 1 (lunes) al 7 (domingo)
 **Decisión:** el número no es un campo; lo da la **posición** en `Semana.dias`. En el código, `dias[0]` es el lunes y `dias[6]` el domingo; el 1–7 solo se usa al mostrar los días al usuario.
 **Porqué:** es más sencillo. Como no hay un campo de número, no puede haber días repetidos y no hace falta validarlo. Coste: hay que recordar que Python empieza a contar desde 0.
+
+## 2026-11-12. Prioridad al clasificar los días
+**Decisión:** si se cumplen dos tipos a la vez, manda este orden: **partido > día antes de partido > la actividad elegida por el usuario**.
+- Un entreno el día antes de un partido se clasifica como "día antes de partido".
+- Con dos partidos seguidos, los dos días son "partido".
+**Porqué:** si hay entreno el día antes de un partido, será muy suave, así que lo que importa para la nutrición es preparar el partido. Y un día con partido es siempre día de partido, aunque al día siguiente haya otro.
+
+## 2026-11-12. La hora no se usa para clasificar los días (v0.1)
+**Decisión:** la clasificación solo mira la actividad de cada día y la del siguiente.
+**Porqué:** simplifica el paso 2. La hora se usará más adelante para colocar las comidas alrededor de las sesiones.
+
+## 2026-11-12. Después del domingo viene el lunes de la misma semana (v0.1)
+**Decisión:** para clasificar el domingo se mira el lunes de *esta* semana, como si la semana se repitiera. En el código: el día siguiente al de la posición `i` es el de la posición `(i + 1) % 7`.
+**Porqué:** las semanas de entreno suelen ser iguales y así no hay que pedir nada más al usuario. Limitación conocida: si este lunes hay partido y el siguiente no, el domingo se clasifica como "día antes de partido" sin serlo. Es poco probable, porque los partidos suelen ser en fin de semana. Se revisará en v0.5, cuando Google Calendar dé las fechas reales.
