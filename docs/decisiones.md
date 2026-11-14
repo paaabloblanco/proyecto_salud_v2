@@ -56,3 +56,7 @@ Formato: fecha, decisión, porqué. Las decisiones se añaden al final y no se b
 ## 2026-11-12. Después del domingo viene el lunes de la misma semana (v0.1)
 **Decisión:** para clasificar el domingo se mira el lunes de *esta* semana, como si la semana se repitiera. En el código: el día siguiente al de la posición `i` es el de la posición `(i + 1) % 7`.
 **Porqué:** las semanas de entreno suelen ser iguales y así no hay que pedir nada más al usuario. Limitación conocida: si este lunes hay partido y el siguiente no, el domingo se clasifica como "día antes de partido" sin serlo. Es poco probable, porque los partidos suelen ser en fin de semana. Se revisará en v0.5, cuando Google Calendar dé las fechas reales.
+
+## 2026-11-14. Revisión de código con fallos puestos a propósito
+**Decisión:** el código que escribe Claude y tiene algo que aprender se entrega como `🔍 REVISIÓN`. Yo lo reviso con 4 preguntas fijas y Claude corrige mi revisión. En más o menos 1 de cada 3 revisiones hay un fallo sutil puesto a propósito, que se revela justo después de mi veredicto y siempre antes del commit.
+**Porqué:** leer y juzgar código ajeno (también el de una IA) es una habilidad clave, y así no acepto nada a ciegas. Las preguntas fijas evitan el "parece bien" sin mirar. El fallo aleatorio obliga a revisar de verdad. Que no se pueda commitear sin la revelación garantiza que ningún fallo puesto se quede en el proyecto.

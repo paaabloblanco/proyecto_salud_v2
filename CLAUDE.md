@@ -38,6 +38,13 @@ Soy estudiante y estoy aprendiendo Python. El objetivo es que entienda cada piez
 - Commits pequeños, con mensajes claros en español.
 - Nunca subas secretos: las claves van en `.env`, que está en `.gitignore`.
 
+### Revisión de código (entrenar el criterio)
+- Cuando Claude escribe código con algo que aprender (no HTML trivial ni configuración), lo entrega marcado como `🔍 REVISIÓN` y yo lo reviso antes de aceptarlo.
+- Mi revisión responde siempre: 1) ¿qué hace, en una frase? 2) ¿qué pasa con una entrada rara? 3) ¿qué cambiarías y por qué? 4) ¿lo aceptas: sí o no?
+- Claude corrige mi revisión: qué vi bien y qué se me escapó.
+- Fallos puestos a propósito: en más o menos 1 de cada 3 revisiones, Claude mete un fallo sutil sin avisar. Solo en bloques `🔍 REVISIÓN`, nunca en la lógica que escribo yo.
+- Regla de seguridad: el código de una revisión no se commitea hasta que Claude revela si había fallo puesto. La revelación se hace siempre en la misma sesión, justo después de mi veredicto.
+
 ## Contexto entre sesiones
 - `docs/estado.md`: qué está hecho, qué es lo siguiente y qué problemas hay abiertos. Léelo al empezar cada sesión y actualízalo al terminar.
 - `docs/decisiones.md`: registro breve de cada decisión de diseño y su porqué.
