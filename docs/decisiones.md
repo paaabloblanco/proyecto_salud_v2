@@ -72,3 +72,19 @@ Formato: fecha, decisión, porqué. Las decisiones se añaden al final y no se b
 ## 2026-11-14. Grasa: rango de % de energía, verificado después (v0.1)
 **Decisión:** la grasa se guarda en el motor de reglas como un rango del 20–35 % de la energía (ACSM/AND/DC 2016; UEFA 2021), pero se comprueba cuando la IA devuelva el menú. La energía del menú se calcula a partir de sus gramos (4 kcal/g de hidratos y proteína, 9 kcal/g de grasa).
 **Porqué:** a diferencia de los hidratos y la proteína, el objetivo de grasa depende de las calorías del propio menú, así que no puede convertirse en gramos antes de que exista. Así el motor de reglas tiene todos los objetivos y no se complica.
+
+## 2026-11-22. Las reglas no guardan su tipo de día (v0.1)
+**Decisión:** `REGLAS_POR_DIA` es un diccionario `TipoDia → ObjetivoDiaGporKg`, y la regla no tiene campo `tipo_dia`. El tipo se pasa como parámetro a `calcular_gramos`, y el resultado (`ObjetivoDiaGramos`) sí lo lleva.
+**Porqué:** una sola fuente de verdad. Con el tipo escrito en la clave y también en la regla, se podían contradecir sin que nadie avisara. El resultado sí lo necesita porque viajará solo hasta la plantilla HTML. Un test comprueba que cada `TipoDia` tiene su regla.
+
+## 2026-11-22. Dos clases: regla en g/kg y objetivo en gramos (v0.1)
+**Decisión:** `ObjetivoDiaGporKg` (la regla) y `ObjetivoDiaGramos` (el objetivo de una persona) son clases distintas. El método `calcular_gramos` de la regla **crea** un objeto nuevo en lugar de modificar uno existente, y copia la grasa con `model_copy()`.
+**Porqué:** con dos clases el tipo dice la unidad y no se mezclan g/kg con gramos. Crear un objeto nuevo hace que Pydantic lo valide (un peso negativo da error) y evita que un cambio en el resultado modifique la regla compartida por todos.
+
+## 2026-11-22. El peso se valida solo en la entrada (v0.1)
+**Decisión:** `calcular_gramos` no comprueba el peso: confía en `Semana`, que lo limita entre 30 y 200 kg. Un peso de 0 da 0 gramos (hay un test que lo documenta); uno negativo lo rechaza `Rango`.
+**Porqué:** validar los datos una vez, en la frontera de entrada, evita repetir la misma comprobación en cada función.
+
+## 2026-11-22. La fuente de las reglas va en un comentario (v0.1)
+**Decisión:** las fuentes de `REGLAS_POR_DIA` se citan en un comentario encima del diccionario, no en un campo `fuente` de la regla.
+**Porqué:** la fuente es para quien lee el código, no para el jugador ni para la IA. Un campo añadiría datos que nadie usa.
