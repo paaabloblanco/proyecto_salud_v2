@@ -60,3 +60,15 @@ Formato: fecha, decisión, porqué. Las decisiones se añaden al final y no se b
 ## 2026-11-14. Revisión de código con fallos puestos a propósito
 **Decisión:** el código que escribe Claude y tiene algo que aprender se entrega como `🔍 REVISIÓN`. Yo lo reviso con 4 preguntas fijas y Claude corrige mi revisión. En más o menos 1 de cada 3 revisiones hay un fallo sutil puesto a propósito, que se revela justo después de mi veredicto y siempre antes del commit.
 **Porqué:** leer y juzgar código ajeno (también el de una IA) es una habilidad clave, y así no acepto nada a ciegas. Las preguntas fijas evitan el "parece bien" sin mirar. El fallo aleatorio obliga a revisar de verdad. Que no se pueda commitear sin la revelación garantiza que ningún fallo puesto se quede en el proyecto.
+
+## 2026-11-14. Objetivos nutricionales como rangos (mínimo–máximo) (v0.1)
+**Decisión:** cada objetivo de un tipo de día se guarda como un rango con mínimo y máximo, no como un valor único. Hidratos y proteína en g/kg (se multiplican por `peso_kg`). Las cifras salen de `docs/investigacion_nutricion.md`, con la fuente citada en el código y marcadas "pendiente de validar por un dietista-nutricionista".
+**Porqué:** la IA nunca acierta un número exacto. Con un rango, el código puede verificar "cumple / no cumple" sin ambigüedad. Usar la misma forma para todos los nutrientes simplifica la verificación.
+
+## 2026-11-14. Proteína: 1,6–2,2 g/kg todos los días (UEFA 2021) (v0.1)
+**Decisión:** el rango de proteína es 1,6–2,2 g/kg/día y no cambia según el tipo de día. Fuente: Collins et al. 2021, UEFA expert group statement, Br J Sports Med, DOI 10.1136/bjsports-2019-101961.
+**Porqué:** es la guía más reciente y específica de fútbol. Ninguna guía cambia la proteína según el día. El mínimo de 1,6 coincide con la meseta de Morton et al. 2018 y protege del riesgo principal, que es comer poco. Coste aceptado: al ser un mínimo más exigente que el de ACSM (1,2), habrá algún reintento más con la IA.
+
+## 2026-11-14. Grasa: rango de % de energía, verificado después (v0.1)
+**Decisión:** la grasa se guarda en el motor de reglas como un rango del 20–35 % de la energía (ACSM/AND/DC 2016; UEFA 2021), pero se comprueba cuando la IA devuelva el menú. La energía del menú se calcula a partir de sus gramos (4 kcal/g de hidratos y proteína, 9 kcal/g de grasa).
+**Porqué:** a diferencia de los hidratos y la proteína, el objetivo de grasa depende de las calorías del propio menú, así que no puede convertirse en gramos antes de que exista. Así el motor de reglas tiene todos los objetivos y no se complica.

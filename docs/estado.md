@@ -1,45 +1,70 @@
 # Estado del proyecto
 
-_Última actualización: 2026-11-13_
+_Última actualización: 2026-11-14_
 
 ## 👉 Dónde estamos
-**v0.1, pasos 0, 1 y 2 terminados. Lo siguiente es el PASO 3: el motor de reglas.**
-Todo está en commits y subido a GitHub (`origin/main`, último commit "Paso 2: clasificación de días..."). En total pasan 24 tests.
+**v0.1, PASO 3 (motor de reglas) a medias.** La investigación está hecha y las decisiones tomadas. `app/reglas.py` tiene `Rango` funcionando y la forma de la regla; faltan las 5 reglas con sus datos y el cálculo con el peso.
+- Commits subidos: hasta el paso 2. Commits locales sin `push`: "Metodología: revisión de código…" y "Investigación de nutrición deportiva…".
+- Sin commitear: `app/reglas.py` (en curso) y las 3 decisiones nuevas de `docs/decisiones.md`. Se commitean juntos al terminar el paso 3.
 
 ## Hecho
 - **Paso 0:** repositorio git y GitHub, `.venv`, `requirements.txt` con versiones fijadas, `.gitignore`, `.env.example`, `README.md` y la ruta `GET /` de prueba (`app/main.py`, `tests/test_rutas.py`).
 - **Paso 1:** `app/modelos.py`
-  - `TipoActividad` (lo que elige el usuario): `partido`, `entreno_fuerte`, `entreno_suave`, `descanso`.
+  - `TipoActividad`: `partido`, `entreno_fuerte`, `entreno_suave`, `descanso`.
   - `Dia`: `actividad` + `hora` (la hora es obligatoria con actividad y está prohibida en descanso, mediante un `model_validator`).
   - `Semana`: `dias` (exactamente 7; la posición 0 es el lunes) + `peso_kg` (de 30 a 200).
   - 17 tests en `tests/test_modelos.py`.
 - **Paso 2:** `app/calendario.py`
-  - `TipoDia` (lo que calcula el programa): los 4 tipos de `TipoActividad` + `dia_antes_partido`.
-  - `clasificar_semana(semana) -> list[TipoDia]`. Prioridad: partido > día antes de partido > actividad del usuario. El día siguiente se busca con `(i + 1) % 7`, así que el domingo mira al lunes de la misma semana. La hora no se usa.
-  - 6 tests en `tests/test_calendario.py`, uno por decisión de diseño.
+  - `TipoDia`: los 4 de `TipoActividad` + `dia_antes_partido`.
+  - `clasificar_semana(semana) -> list[TipoDia]`. Prioridad: partido > día antes de partido > actividad. El día siguiente es `(i + 1) % 7`.
+  - 6 tests en `tests/test_calendario.py`.
+- **Investigación (paso 3):** `docs/investigacion_nutricion.md` (informe con la tabla por tipo de día) y `docs/investigacion_notas/` (5 notas con las fuentes). Conclusión: solo los hidratos cambian según el día; no hace falta estimar calorías; no existe un "peso ideal" y la app nunca fija un objetivo de peso. El anexo del informe lista citas sin verificar.
+- **Decisiones del paso 3** (en `decisiones.md`): objetivos como rangos mín–máx; proteína de 1,6 a 2,2 g/kg todos los días (UEFA 2021); grasa del 20 al 35 % de la energía, que se guarda ahora y se comprueba cuando haya menú.
 
-## Siguiente: PASO 3, motor de reglas (`app/reglas.py`, lo escribe el usuario)
-Objetivo: a cada `TipoDia` le corresponden unos objetivos nutricionales, expresados en g/kg y calculados con `peso_kg`.
-Antes de programar hay que decidir (y apuntar en `decisiones.md`):
-1. **Qué nutrientes** entran en v0.1: hidratos y proteína seguro. ¿Grasa? ¿Hidratación?
-2. **Qué fuentes** se citan. Candidata: la posición conjunta ACSM/AND/DC de 2016, *Nutrition and Athletic Performance*. Cada cifra lleva su fuente y la marca "pendiente de validar por un dietista-nutricionista". No se inventan cifras.
-3. **La forma del resultado:** probablemente un modelo Pydantic (por ejemplo `ObjetivosDia`) con las cantidades en gramos y un texto con el motivo ("más hidratos porque mañana hay partido"), que necesitará la página final.
-4. **Los horarios de las comidas** (el `CLAUDE.md` dice "objetivos y horarios"): si se usan ya en el paso 3 con `Dia.hora` o se dejan para cuando entre la IA.
-Para empezar la sesión: Claude plantea el problema y las decisiones; el usuario decide y escribe el código; Claude revisa y escribe los tests restantes.
+## Paso 3: qué hay en `app/reglas.py`
+- `Rango` ✅ `minimo` y `maximo` con `Field(ge=0)` y un `model_validator` que rechaza `maximo < minimo`. 6–6 es válido. Probado a mano con 6–8, 6–6, 8–6 y -1–5.
+- `ObjetivoDiaGporKg`: `tipo_dia`, `rango_hidratos`, `rango_proteina`, `porcentaje_grasa` (los tres son `Rango`) y `motivo: str`.
+
+### Pendiente de pulir (lo escribe el usuario)
+- Un comentario que explique por qué se acepta 6–6.
+- `motivo` con `Field(min_length=1)`, para que no quede vacío.
+- Decidir si se añade un campo `fuente`, o si la fuente va en un comentario encima de cada regla.
+- Pensar qué pasa con un porcentaje > 100 (`Rango(minimo=20, maximo=150)`).
+- PEP 8:
+  - `mode="after"`.
+  - Un espacio después de `:` en los campos.
+  - Una línea en blanco antes de `@model_validator`.
+  - Dos líneas en blanco entre clases.
+  - Un salto de línea al final del archivo.
+
+### Siguiente, por orden (lo escribe el usuario)
+1. **Las 5 reglas** en un diccionario `TipoDia → regla`, con los motivos escritos por el usuario. Si la clave ya es el `TipoDia`, ¿sobra el campo `tipo_dia` de la regla?
+   | Tipo de día | Hidratos (g/kg) | Proteína (g/kg) | Grasa (% de la energía) |
+   |---|---|---|---|
+   | Partido | 6–8 | 1,6–2,2 | 20–35 |
+   | Día antes de partido | 6–8 | 1,6–2,2 | 20–35 |
+   | Entreno fuerte | 5–6 | 1,6–2,2 | 20–35 |
+   | Entreno suave | 3–5 | 1,6–2,2 | 20–35 |
+   | Descanso | 3–5 | 1,6–2,2 | 20–35 |
+2. **Una segunda clase** para el objetivo ya calculado, en gramos para una persona. Es distinta de la regla en g/kg, para no mezclar unidades.
+3. **Un método de la regla** que recibe `peso_kg` y devuelve esa clase. Los hidratos y la proteína se multiplican por el peso; la grasa no.
+4. Tests en `tests/test_reglas.py`: el usuario escribe los suyos y Claude los que falten.
+5. Commit del paso 3 junto con las decisiones.
 
 ## Pasos que quedan en v0.1
 | # | Paso | Quién |
 |---|---|---|
-| 3 | Motor de reglas: objetivos por tipo de día (g/kg, con fuentes) | usuario (Claude, tests) |
-| 4 | Formulario HTML + ruta POST que muestra los días clasificados y sus objetivos (todavía sin IA). **Aquí se añaden el presupuesto y los gustos a `Semana`**, que se aplazaron en el paso 1 | Claude las plantillas, usuario la conexión |
+| 3 | Motor de reglas (en curso) | usuario (Claude, tests) |
+| 4 | Formulario HTML + ruta POST que muestra los días clasificados y sus objetivos (todavía sin IA). **Aquí se añaden el presupuesto y los gustos a `Semana`** | Claude las plantillas, usuario la conexión |
 | 5 | Modelo Pydantic del plan (la salida de la IA), validado con un JSON de ejemplo | juntos |
-| 6 | `app/ia.py`: prompt + `client.messages.parse(output_format=...)` con Claude + un reintento si la validación falla (tests con mock) | Claude, explicándolo |
-| 7 | `app/planificador.py` (calendario → reglas → IA) + `plan.html` con el plan por día, el motivo de cada ajuste y el aviso visible | usuario el planificador, Claude el HTML |
-| 8 | Límites de seguridad: si aparecen alergias o condiciones médicas, mensaje que recomienda acudir a un profesional | juntos |
-Al terminar el paso 8 se cierra la v0.1. La v0.2 es la tabla de precios y la verificación del presupuesto en código (ver la hoja de ruta en `CLAUDE.md`).
+| 6 | `app/ia.py`: prompt + `client.messages.parse(output_format=...)` + un reintento si la validación falla (tests con mock) | Claude, explicándolo |
+| 7 | `app/planificador.py` (calendario → reglas → IA) + `plan.html` con el plan, el motivo de cada ajuste y el aviso visible. Aquí se comprueba la grasa (% de la energía del menú) | usuario el planificador, Claude el HTML |
+| 8 | Límites de seguridad: alergias o condiciones médicas → recomendar acudir a un profesional | juntos |
 
 ## Problemas / notas
-- Falta rellenar en `app/modelos.py` el comentario de los límites del peso (`# Límites del peso: mínimo ___ porque ___`) y aplicar el estilo PEP 8 (espacios en comas y tipos).
-- **Imports:** dentro de `app/` se importa siempre con `app.` (`from app.modelos import ...`). Todo se ejecuta desde la raíz del proyecto (`pytest`, `uvicorn app.main:app --reload`), nunca con el botón ▶ del editor sobre un archivo de `app/`. Esto ya causó errores en el paso 2.
-- Conocido: si este lunes hay partido y el de la semana siguiente no, el domingo se clasifica mal (decisión de v0.1, se revisará en v0.5 con Google Calendar).
-- Python 3.14.5 (cumple el requisito de 3.11 o superior).
+- **Guardar antes de probar:** en esta sesión el archivo estaba editado pero sin guardar, y la prueba usaba la versión vieja. En VS Code, un ● en la pestaña significa que hay cambios sin guardar.
+- `git commit` está bloqueado para Claude por los permisos: los commits los hace el usuario con `!`, o se da permiso con `/permissions`.
+- Falta rellenar en `app/modelos.py` el comentario `# Límites del peso: mínimo ___ porque ___` y aplicar PEP 8.
+- **Imports:** dentro de `app/` se importa siempre con `app.`. Todo se ejecuta desde la raíz (`pytest`, `uvicorn app.main:app --reload`), nunca con el botón ▶ del editor.
+- Conocido: si este lunes hay partido y el de la semana siguiente no, el domingo se clasifica mal (se revisará en v0.5).
+- Python 3.14.5.
