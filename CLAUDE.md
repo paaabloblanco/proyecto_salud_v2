@@ -1,7 +1,7 @@
 # Planificador de comidas para jugadores de futsal
 
 ## Qué es
-App web que genera un plan semanal de comidas para jugadores de futsal según su calendario de entrenos y partidos, sus gustos y su presupuesto. Público: jugadores que no pueden pagar un nutricionista.
+App web que genera un plan semanal de comidas para jugadores de futsal según su calendario de entrenos y partidos, sus gustos y (desde v0.2) su presupuesto. Público: jugadores que no pueden pagar un nutricionista.
 
 Es sobre todo un **proyecto de aprendizaje** (Python, APIs, IA, cloud). Primero será una app web; la versión móvil vendrá más adelante.
 
@@ -51,15 +51,16 @@ Soy estudiante y estoy aprendiendo Python. El objetivo es que entienda cada piez
 
 ## Versión actual: v0.1
 **Objetivo:** una página web donde introduzco mi semana a mano y recibo un plan de comidas por día.
-- Formulario: para cada día de la semana, el tipo de actividad (partido, entreno fuerte, entreno suave o descanso) y la hora; peso corporal en kg (las reglas se expresan en g/kg); presupuesto semanal; alimentos que me gustan y que no.
+- Formulario: para cada día de la semana, el tipo de actividad (partido, entreno fuerte, entreno suave o descanso) y la hora; peso corporal en kg (las reglas se expresan en g/kg).
+- Gustos por rechazo: sobre el plan generado, el jugador marca los alimentos que no quiere y se regenera el plan sin ellos. Sin base de datos, la semana y la lista de rechazados viajan en campos ocultos del formulario.
 - El backend clasifica los días (incluido "día antes de partido") y aplica las reglas.
 - La IA genera el plan y el código valida que el JSON tiene el formato correcto.
 - La página muestra el plan por día, con el motivo de cada ajuste (por ejemplo, "más hidratos hoy porque mañana hay partido").
 
-**Fuera de alcance en v0.1:** login, base de datos, precios reales, Google Calendar, despliegue y móvil.
+**Fuera de alcance en v0.1:** presupuesto, login, base de datos, precios reales, Google Calendar, despliegue y móvil.
 
 ## Hoja de ruta
-- v0.2: tabla de precios propia (unos 50 productos) y verificación del presupuesto en código
+- v0.2: presupuesto semanal en el formulario, tabla de precios propia (unos 50 productos) y verificación del presupuesto en código
 - v0.3: Supabase para guardar los planes, los gustos y el login
 - v0.4: despliegue en la nube
 - v0.5: integración con Google Calendar

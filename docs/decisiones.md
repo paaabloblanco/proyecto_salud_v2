@@ -88,3 +88,11 @@ Formato: fecha, decisión, porqué. Las decisiones se añaden al final y no se b
 ## 2026-11-22. La fuente de las reglas va en un comentario (v0.1)
 **Decisión:** las fuentes de `REGLAS_POR_DIA` se citan en un comentario encima del diccionario, no en un campo `fuente` de la regla.
 **Porqué:** la fuente es para quien lee el código, no para el jugador ni para la IA. Un campo añadiría datos que nadie usa.
+
+## 2026-11-23. El presupuesto pasa a v0.2
+**Decisión:** el formulario de v0.1 no pide presupuesto. El campo y su verificación llegan juntos en v0.2, con la tabla de precios. Sustituye a la decisión del 2026-11-12 "Presupuesto y gustos se aplazan dentro de v0.1" en lo que toca al presupuesto.
+**Porqué:** sin precios reales el código no puede comprobar el presupuesto, y la regla es que la IA nunca calcula precios. Pedir un dato que no se puede verificar no aporta nada.
+
+## 2026-11-23. Gustos por rechazo, no por lista previa (v0.1)
+**Decisión:** el formulario no pide gustos. Sobre el plan generado, el jugador marca los alimentos que no quiere y se regenera el plan excluyéndolos. Sin base de datos, la semana y la lista de rechazados viajan en campos ocultos (`<input type="hidden">`) de la página del plan. `Semana` no cambia en el paso 4; el modelo de los rechazados se decide en un paso nuevo, después de la IA (paso 6).
+**Porqué:** es más fácil decir "esto no" a un plato que ves que escribir en frío una lista de gustos. HTTP no tiene memoria entre peticiones, así que el estado tiene que ir en la propia petición hasta que haya base de datos (v0.3). Límite: rechazar sirve para gustos, no para alergias; una alergia se deriva a un profesional (paso 8).

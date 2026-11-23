@@ -1,10 +1,10 @@
 # Estado del proyecto
 
-_Última actualización: 2026-11-22_
+_Última actualización: 2026-11-23_
 
 ## 👉 Dónde estamos
 **v0.1: el PASO 3 (motor de reglas) está terminado.** Lo siguiente es el **paso 4** (formulario HTML + ruta POST, todavía sin IA).
-- Último commit: `f0be829` "Paso 3: motor de reglas…". **Falta el `git push`.**
+- 2026-11-23: el presupuesto pasa a v0.2 y los gustos se recogen por rechazo sobre el plan (ver `decisiones.md`).
 
 ## Hecho
 - **Paso 0:** repositorio git y GitHub, `.venv`, `requirements.txt` con versiones fijadas, `.gitignore`, `.env.example`, `README.md` y la ruta `GET /` de prueba (`app/main.py`, `tests/test_rutas.py`).
@@ -26,9 +26,9 @@ _Última actualización: 2026-11-22_
   - 14 tests en `tests/test_reglas.py`. **Total: 38 tests pasando.**
 
 ## Siguiente: paso 4
-1. **Decidir cómo añadir el presupuesto y los gustos a `Semana`** (tipos, límites, ¿lista de texto para los gustos?). Va antes que el HTML porque el formulario depende de esos campos. Lo escribe el usuario, con sus tests.
-2. Claude escribe las plantillas Jinja2: el formulario (7 días, peso, presupuesto, gustos) y la página de resultados.
-3. El usuario escribe la ruta `POST` en `app/main.py`: formulario → `Semana` → `clasificar_semana` → `calcular_gramos` para cada día.
+`Semana` no cambia.
+1. Claude escribe las plantillas Jinja2: el formulario (7 días + peso) y la página de resultados.
+2. El usuario escribe la ruta `POST` en `app/main.py`: formulario → `Semana` → `clasificar_semana` → `calcular_gramos` para cada día.
 
 ## Pendientes pequeños
 - **`extra="forbid"`** (`model_config = ConfigDict(extra="forbid")`): Pydantic ignora en silencio los campos de más. Decidir si se usa en las reglas (para detectar erratas) y en el modelo del plan de la IA (paso 5). Apuntarlo en `decisiones.md`.
@@ -39,9 +39,10 @@ _Última actualización: 2026-11-22_
 ## Pasos que quedan en v0.1
 | # | Paso | Quién |
 |---|---|---|
-| 4 | Formulario HTML + ruta POST que muestra los días clasificados y sus objetivos (todavía sin IA). **Aquí se añaden el presupuesto y los gustos a `Semana`** | Claude las plantillas, usuario la conexión |
+| 4 | Formulario HTML + ruta POST que muestra los días clasificados y sus objetivos (todavía sin IA) | Claude las plantillas, usuario la conexión |
 | 5 | Modelo Pydantic del plan (la salida de la IA), validado con un JSON de ejemplo | juntos |
 | 6 | `app/ia.py`: prompt + `client.messages.parse(output_format=...)` + un reintento si la validación falla (tests con mock) | Claude, explicándolo |
+| 6b | Gustos por rechazo: modelo de los rechazados (p. ej. `list[str]`), campos ocultos en la página del plan, ruta para regenerar y su hueco en el prompt | juntos |
 | 7 | `app/planificador.py` (calendario → reglas → IA) + `plan.html` con el plan, el motivo de cada ajuste y el aviso visible. Aquí se comprueba la grasa (% de la energía del menú) | usuario el planificador, Claude el HTML |
 | 8 | Límites de seguridad: alergias o condiciones médicas → recomendar acudir a un profesional | juntos |
 
