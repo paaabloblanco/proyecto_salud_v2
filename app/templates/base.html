@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Planificador futsal{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 16px; line-height: 1.4; }
+    .aviso { background: #fff4d6; border: 1px solid #e0b84d; padding: 10px 12px; border-radius: 6px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-bottom: 1px solid #ddd; padding: 6px 8px; text-align: left; vertical-align: top; }
+    .motivo { color: #555; font-size: 0.9em; }
+    button { padding: 8px 16px; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Planificador de comidas para futsal</h1>
+
+  <p class="aviso">
+    <strong>Aviso:</strong> esto es orientación general y no sustituye a un dietista-nutricionista.
+    Si tienes alergias, alguna enfermedad o una condición médica, consulta a un profesional.
+  </p>
+
+  {% block contenido %}{% endblock %}
+</body>
+</html>

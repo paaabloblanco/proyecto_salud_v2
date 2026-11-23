@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{# Espera: semana (Semana) y objetivos (list[ObjetivoDiaGramos]), en el mismo orden: 0 = lunes #}
+
+{% block contenido %}
+{% set nombres = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"] %}
+{% set etiquetas = {
+  "partido": "Partido",
+  "dia_antes_partido": "Día antes de partido",
+  "entreno_fuerte": "Entreno fuerte",
+  "entreno_suave": "Entreno suave",
+  "descanso": "Descanso",
+} %}
+<h2>Objetivos de tu semana ({{ semana.peso_kg }} kg)</h2>
+<table>
+  <tr><th>Día</th><th>Tipo de día</th><th>Hidratos (g)</th><th>Proteína (g)</th><th>Grasa (% energía)</th></tr>
+  {% for objetivo in objetivos %}
+  {% set dia = semana.dias[loop.index0] %}
+  <tr>
+    <td>
+      {{ nombres[loop.index0] }}
+      {% if dia.hora is not none %}<br><span class="motivo">{{ dia.hora.strftime("%H:%M") }}</span>{% endif %}
+    </td>
+    <td>
+      {{ etiquetas[objetivo.tipo_dia] }}
+      <br><span class="motivo">{{ objetivo.motivo }}</span>
+    </td>
+    <td>{{ objetivo.rango_hidratos_g.minimo | round | int }}–{{ objetivo.rango_hidratos_g.maximo | round | int }}</td>
+    <td>{{ objetivo.rango_proteina_g.minimo | round | int }}–{{ objetivo.rango_proteina_g.maximo | round | int }}</td>
+    <td>{{ objetivo.porcentaje_grasa.minimo | int }}–{{ objetivo.porcentaje_grasa.maximo | int }} %</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p><a href="/">← Cambiar la semana</a></p>
+{% endblock %}
